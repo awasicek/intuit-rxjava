@@ -2,6 +2,7 @@ package demos;
 
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableTransformer;
+import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.observers.TestObserver;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -9,6 +10,7 @@ import org.junit.Test;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class RxOperators {
@@ -19,7 +21,8 @@ public class RxOperators {
     /*
     take(int count) -> take only a certain number of items from the source Observable
     takeLast(int count) -> take the last count items from the source
-    takeWhile(Predicate fn) -> take while the Predicate returns true
+    takeWhile(Predicate fn) -> take while the Predicate returns true (once it is not true, STOP taking all together --
+      unlike filter)
     forEach(Consumer) -> process each thing passed to it, returning nothing
     */
 
@@ -89,6 +92,22 @@ public class RxOperators {
     Observable<Integer> numbers = Observable.range(2, 10);
     numbers.map(x -> x * 2)
            .subscribe(System.out::println);
+
+    // note that unlike java streams, rx does not 'cut to the chase' with terminal operators if intermediate operators
+    // would not change the result
+    Single<Long> rxCount = numbers.map(x -> {
+      System.out.println("rx mapped");
+      return x * 3;
+    }).count();
+    System.out.println("count of rx nums: " + rxCount.blockingGet());
+    System.out.println();
+    System.out.println();
+    IntStream stream = IntStream.range(1, 10);
+    long count = stream.map(val -> {
+      System.out.println("Mapped");
+      return val*2;
+    }).count();
+    System.out.println("count: " + count);
   }
 
   @Ignore

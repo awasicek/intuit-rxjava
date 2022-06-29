@@ -72,11 +72,27 @@ public class ErrorHandlers {
                throw new Exception("Divisible by  five!");
              }
            })
-           .onErrorResumeNext((e) -> numbers.skip(index.get()))
+           .onErrorResumeNext((e) -> numbers.skip(index.get())) // note that the observable this emits won't be mapped by preceding map operator
            .subscribe(System.out::println,
                       e -> System.err.println("Should never reach here"),
                       () -> System.out.println("We're done here."));
 
+  }
+
+  @Test
+  public void onErrorResumeNextActuallyResumesTest() {
+      numbers.map(i -> {
+          if (i % 5 == 0) {
+              return Observable.error(new RuntimeException("divisible by 5!"));
+          }
+          return Observable.just(i);
+      }).flatMap(o -> {
+          return o.onErrorResumeNext(e -> Observable.empty());
+      }).subscribe(
+              System.out::println,
+              e -> System.err.println("shoul;d never reach here"),
+              () -> System.out.println("we are done")
+      );
   }
 
   @Test

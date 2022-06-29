@@ -1,6 +1,7 @@
 package rxjava.lab02;
 
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Single;
 
 import java.util.Objects;
 import java.util.StringJoiner;
@@ -27,8 +28,8 @@ public class Employee {
     return Observable.just(lastName);
   }
 
-  public Observable<Integer> getSalary() {
-    return Observable.just(salary);
+  public Single<Integer> getSalary() {
+    return Single.fromObservable(Observable.just(salary));
   }
 
   @Override
