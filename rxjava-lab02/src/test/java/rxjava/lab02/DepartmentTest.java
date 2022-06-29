@@ -1,5 +1,6 @@
 package rxjava.lab02;
 
+import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.observers.TestObserver;
 import org.junit.Before;
@@ -38,4 +39,19 @@ public class DepartmentTest {
     itDepartment.addManager(mgr2);
   }
 
+  @Test
+  public void getCompleteListOfManagers() {
+    Observable<Manager> managers = itDepartment.getManagers();
+    TestObserver<Manager> to = managers.test();
+
+    to.assertValues(mgr1, mgr2);
+  }
+
+  @Test
+  public void getCompleteListOfEmployees() {
+    Observable<Employee> employees = itDepartment.getEmployees();
+    TestObserver<Employee> to = employees.test();
+
+    to.assertValues(emp1, emp2, emp3, emp4, emp5, emp6);
+  }
 }
