@@ -35,5 +35,50 @@ public class ManagerTest {
     mgr2 = new Manager("Jenny", "Bigcheese", 100000, mgr2Team);
   }
 
+  @Test
+  public void printOnlyFirstTwoEmployees() {
+    Observable.concat(mgr1.getTeam().take(2), mgr2.getTeam().take(2)).forEach(System.out::println);
+  }
+
+  @Test
+  public void concatBothManagersEmployees() {
+    Observable<Employee> bothTeams = Observable.concat(mgr1.getTeam(), mgr2.getTeam());
+    TestObserver<Employee> to = bothTeams.test();
+    bothTeams.forEach(System.out::println);
+
+    to.assertValues(emp1, emp2, emp3, emp4, emp5, emp6);
+  }
+
+  @Test
+  public void printUntilHighPaidEmployee() {
+    Observable<Employee> bothTeams = Observable.concat(mgr1.getTeam(), mgr2.getTeam());
+    Observable<Employee> untilHighPaid = bothTeams.takeWhile(emp -> emp.getSalary().blockingGet() < 70_000);
+    TestObserver<Employee> to = untilHighPaid.test();
+
+    untilHighPaid.forEach(System.out::println);
+    to.assertValues(emp1, emp2, emp3);
+  }
+
+  @Test
+  public void sortEmployeesBySalary() {
+    Observable<Employee> bothTeams = Observable.concat(mgr1.getTeam(), mgr2.getTeam());
+    Observable<Employee> sorted = bothTeams.sorted(
+            (empA, empB) -> Integer.compare(empA.getSalary().blockingGet(), empB.getSalary().blockingGet())
+    );
+    TestObserver<Employee> to = sorted.test();
+
+    sorted.forEach(System.out::println);
+    to.assertValues(emp6, emp1, emp3, emp5, emp2, emp4);
+  }
+
+  @Test
+  public void filterForHighPaidEmployees() {
+    Observable<Employee> bothTeams = Observable.concat(mgr1.getTeam(), mgr2.getTeam());
+    Observable<Employee> onlyHighPaid = bothTeams.filter(emp -> emp.getSalary().blockingGet() >= 70_000);
+    TestObserver<Employee> test = onlyHighPaid.test();
+
+    onlyHighPaid.forEach(System.out::println);
+    test.assertValues(emp4);
+  }
 }
 
