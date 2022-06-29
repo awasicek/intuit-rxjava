@@ -5,8 +5,11 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.reactivex.rxjava3.subjects.ReplaySubject;
 import org.junit.Test;
 
+// multi-threading / parallelization
+// http://tomstechnicalblog.blogspot.com/2016/02/rxjava-understanding-observeon-and.html
+
 @SuppressWarnings("ResultOfMethodCallIgnored")
-public class ObserveOnSubscribeOn {
+public class ParallelismWithObserveOnSubscribeOn {
   @Test
   public void observeOnTest() throws InterruptedException {
     System.out.println("======================================================");
